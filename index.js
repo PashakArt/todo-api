@@ -14,8 +14,8 @@ app.get("/todo/:id", handlers.getById);
 
 app.post("/todo/create", handlers.createTask);
 
-app.put("/todo/update/:id", handlers.updateTask);
+app.put("/todo/:id", handlers.updateTask);
 
-app.delete("/todo/delete/:id", handlers.deleteTask);
+app.delete("/todo/:id", handlers.deleteTask);
 
 app.listen(port, () => console.log(`App started on http://localhost:${port}`));

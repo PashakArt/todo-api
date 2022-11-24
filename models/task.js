@@ -15,6 +15,7 @@ mongoose.connect(DB_CONNECT, { autoIndex: false }, (err) => {
 const todoSchema = new mongoose.Schema({
   title: String,
   description: String,
+  isActive: Boolean,
   date: {
     type: Date,
     default: Date.now,
