@@ -1,42 +1,41 @@
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-
-dotenv.config();
-
-const DB_CONNECT = process.env.DB_CONNECT;
-
-mongoose.connect(DB_CONNECT, { autoIndex: false }, (err) => {
-  if (err) {
-    console.log(`Exception: ${err.message}`);
-    process.exit(1);
-  }
-});
-
-const todoSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-const task = mongoose.model("Task", todoSchema);
+const Task = require("./models/task");
 
 exports.getAll = (req, res) => {
   console.log("Показываю все таски");
+  Task.find({}, (err, tasks) => {
+    res.json({ allTasks: tasks });
+  });
 };
+
 exports.getById = (req, res) => {
   console.log("Показываю одну таску");
+  const id = req.params.id;
+  Task.findById(id, (err, task) => {
+    if (err) {
+      res.json({ message: err.message });
+    } else {
+      res.json({ task: task });
+    }
+  });
 };
-exports.createTask = (req, res) => {
+
+exports.createTask = async (req, res) => {
   console.log("Создаю одну таску");
-  content = req.body;
-  console.log(content);
+  title = req.body.title;
+  description = req.body.description;
+  console.log(`Title is - ${title}\ndescription is - ${description}`);
+  const task = new Task({
+    title: title,
+    description: description,
+  });
+  await task.save();
+  res.json({ message: "successful" });
 };
+
 exports.updateTask = (req, res) => {
   console.log("Обновляю одну таску");
 };
+
 exports.deleteTask = (req, res) => {
   console.log("Удаляю одну таску");
 };
