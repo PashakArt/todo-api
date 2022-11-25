@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const handlers = require("./handlers");
+const handlers = require("./controllers/crud.controllers");
+const userRouter = require("./users/users");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,5 +18,10 @@ app.post("/todo/create", handlers.createTask);
 app.put("/todo/:id", handlers.updateTask);
 
 app.delete("/todo/:id", handlers.deleteTask);
+
+app.use("/users", userRouter);
+
+app.use(handlers.notFound);
+app.use(handlers.serverError);
 
 app.listen(port, () => console.log(`App started on http://localhost:${port}`));
