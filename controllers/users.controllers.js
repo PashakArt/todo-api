@@ -1,8 +1,15 @@
+/** @module */
+
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { jwtSecret } = require("../config");
 const User = require("../models/user.model");
 
+/**
+ * controller to register users
+ * @param {object} req - request object
+ * @param {object} res - response object
+ */
 userRegister = async (req, res) => {
   try {
     const email = req.body.email.toLowerCase();
@@ -19,12 +26,17 @@ userRegister = async (req, res) => {
       password: hashPassword,
     });
     await user.save();
-    res.json({ message: "Succesful" });
+    return res.json({ message: "successfully" });
   } catch (err) {
-    res.status(400).json({ message: "Registration error" });
+    return res.status(400).json({ message: "Registration error" });
   }
 };
 
+/**
+ * controller to login users
+ * @param {object} req - request object
+ * @param {object} res - response object
+ */
 userLogin = async (req, res) => {
   const user = await User.findOne({ username: req.body.username }).exec();
   if (!user) {
@@ -37,29 +49,19 @@ userLogin = async (req, res) => {
   if (!passwordIsValid) {
     return res.status(401).json({ message: "Invalid password" });
   }
-  const token = signJWT(user.email, jwtSecret);
-  console.log(req.session);
-  // TODO доделать аутентификацию и добавление в куки jwt токена
+  const token = sign(user.username, jwtSecret);
+  req.session.token = token;
+  return res.json({ message: `${req.body.username} signed in successfully` });
 };
 
-userLogout = (req, res) => {};
-
-const signJWT = (email, secret) => {
-  return new Promise((resolve, reject) => {
-    sign(
-      { email, iat: Math.floor(Date.now() / 1000) },
-      secret,
-      {
-        algorithm: "HS256",
-      },
-      (err, token) => {
-        if (err) {
-          reject(err);
-        }
-        resolve(token);
-      }
-    );
-  });
+/**
+ * controller to logout users
+ * @param {object} req - request object
+ * @param {object} res - response object
+ */
+userLogout = (req, res) => {
+  req.session = null;
+  res.json({ message: "You are logged out" });
 };
 
 module.exports = { userRegister, userLogin, userLogout };

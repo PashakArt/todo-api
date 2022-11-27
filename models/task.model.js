@@ -1,5 +1,8 @@
+/** @module */
+
 const mongoose = require("mongoose");
 
+/** schema of Todo document */
 const todoSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },

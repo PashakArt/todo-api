@@ -1,28 +1,44 @@
+/** @module */
+
 const Task = require("../models/task.model");
-
 const invallidParametrsMsg = { answer: "Title or discription isn't correct" };
-const succesfulMsg = { message: "successful" };
+const succesfulMsg = { message: "successfully" };
 
+/**
+ * controller for getting all tasks
+ * @param {object} req - request object
+ * @param {object} res - response object
+ */
 exports.getAll = (req, res) => {
   Task.find((err, tasks) => {
     if (err) {
       // TODO добавить логирование в файл
-      res.status(500).json(err.message);
+      return res.status(500).json(err.message);
     }
-    res.json(tasks);
+    return res.json(tasks);
   });
 };
 
+/**
+ * controller for getting one task
+ * @param {object} req - request object
+ * @param {object} res - response object
+ */
 exports.getById = (req, res) => {
   const id = req.params.id;
   Task.findById(id, (err, task) => {
     if (err) {
       res.status(404).json({ message: "Not found" });
     }
-    res.json(task);
+    return res.json(task);
   });
 };
 
+/**
+ * controller for create one task
+ * @param {object} req - request object
+ * @param {object} res - response object
+ */
 exports.createTask = async (req, res) => {
   const title = req.body.title;
   const description = req.body.description;
@@ -35,41 +51,60 @@ exports.createTask = async (req, res) => {
     await task.save();
     res.status(201).json(succesfulMsg);
   } catch (error) {
-    // TODO добавить логирование в файл
     console.log(error.message);
-    res.status(400).json({ message: "Creating task error" });
+    return res.status(400).json({ message: "Creating task error" });
   }
 };
 
+/**
+ * controller for update one task
+ * @param {object} req - request object
+ * @param {object} res - response object
+ */
 exports.updateTask = (req, res) => {
   const id = req.params.id;
   const title = req.body.title;
   const description = req.body.description;
   if (!title || !description) {
-    res.status(400).json(invallidParametrsMsg);
+    return res.status(400).json(invallidParametrsMsg);
   }
   Task.findByIdAndUpdate(
     id,
     { title: title, description: description },
     (err) => {
-      if (!err) {
-        res.json(succesfulMsg);
+      if (err) {
+        return res.status(500).json({ message: err.message });
       }
-      res.status(500).json({ message: err.message });
+      return res.json(succesfulMsg);
     }
   );
 };
 
+/**
+ * controller for delete one task
+ * @param {object} req - request object
+ * @param {object} res - response object
+ */
 exports.deleteTask = (req, res) => {
   const id = req.params.id;
   Task.findByIdAndRemove(id, (err) => {
     if (err) {
       return res.status(404).json({ message: "Not found" });
     }
-    res.json(succesfulMsg);
+    return res.json(succesfulMsg);
   });
 };
 
+/**
+ * controller to handle unused route
+ * @param {object} req - request object
+ * @param {object} res - response object
+ */
 exports.notFound = (req, res) => res.status(404).end();
 
+/**
+ * controller to handle unused route
+ * @param {object} req - request object
+ * @param {object} res - response object
+ */
 exports.serverError = (err, req, res, next) => res.status(500).end();

@@ -1,5 +1,8 @@
+/** @module */
+
 const mongoose = require("mongoose");
 
+/** schema of User document */
 const userShema = new mongoose.Schema({
   username: { type: String, required: true },
   email: { type: String, required: true },
