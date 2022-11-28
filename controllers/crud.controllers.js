@@ -9,13 +9,18 @@ const succesfulMsg = { message: "successfully" };
  * @param {object} req - request object
  * @param {object} res - response object
  */
-exports.getAll = (req, res) => {
-  Task.find((err, tasks) => {
-    if (err) {
-      return res.status(500).json(err.message);
-    }
+exports.getAll = async (req, res) => {
+  /** for paggination */
+  const { page, limit } = req.query;
+  try {
+    const tasks = await Task.find()
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .exec();
     return res.json(tasks);
-  });
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
 };
 
 /**
@@ -39,8 +44,9 @@ exports.getById = (req, res) => {
  * @param {object} res - response object
  */
 exports.createTask = async (req, res) => {
-  const title = req.body.title;
-  const description = req.body.description;
+  const { title, description } = req.body;
+  console.log(title);
+  console.log(description);
   const task = new Task({
     title: title,
     description: description,
