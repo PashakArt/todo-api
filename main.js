@@ -29,8 +29,8 @@ app.use(
 /** connnect to router for register, login, logout */
 app.use("/users", userRouter);
 
-/** middleware for check jwt */
-app.use(checkAuth);
+/** middleware for check jwt for access to crud methods */
+app.use("/todo", checkAuth);
 
 /** CRUD endpoints */
 app.get("/todo", handlers.getAll);
