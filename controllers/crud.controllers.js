@@ -12,7 +12,6 @@ const succesfulMsg = { message: "successfully" };
 exports.getAll = (req, res) => {
   Task.find((err, tasks) => {
     if (err) {
-      // TODO добавить логирование в файл
       return res.status(500).json(err.message);
     }
     return res.json(tasks);

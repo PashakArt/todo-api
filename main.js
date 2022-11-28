@@ -43,9 +43,5 @@ app.put("/todo/:id", handlers.updateTask);
 
 app.delete("/todo/:id", handlers.deleteTask);
 
-/** middleware for not exists routes */
-app.use(handlers.notFound);
-app.use(handlers.serverError);
-
 /** run app */
 app.listen(port, () => console.log(`App started on http://localhost:${port}`));
